@@ -46,12 +46,13 @@ if($age -lt 0) { $age = $age * -1 }
 # $LogName = $(Get-Item -Path $path).FullName + "\FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
 $LogName = "FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
 
- Write-Output "Cleaning $path of files older than $age days" | Tee-Object -Append -FilePath $LogName
+ 
 
  if(Test-Path -Path $path) {
     # If the path exists, switch there so the log sticks with the folder being cleaned
     cd $path
-	
+
+	Write-Output "Cleaning $path of files older than $age days" | Tee-Object -Append -FilePath $LogName
 	Write-Output "Deleting old files....." | Tee-Object -Append -FilePath $LogName
 
     $files = Get-ChildItem -recurse -File -Path $path | 

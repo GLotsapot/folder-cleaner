@@ -60,7 +60,7 @@ $LogName = "FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
     foreach ($file in $files)
     {
         Write-Output "-- Deleting $file" | Tee-Object -Append -FilePath $LogName
-        Remove-Item $file -Confirm:$false -ErrorAction SilentlyContinue -ErrorVariable err
+        $file | Remove-Item -Confirm:$false -ErrorAction SilentlyContinue -ErrorVariable err
         if($err)
         {
             Write-Output "---- Failed to delete! "  | Tee-Object -Append -FilePath $LogName

@@ -46,17 +46,15 @@ if($age -lt 0) { $age = $age * -1 }
 # $LogName = $(Get-Item -Path $path).FullName + "\FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
 $LogName = "FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
 
- 
-
  if(Test-Path -Path $path) {
     # If the path exists, switch there so the log sticks with the folder being cleaned
-    cd $path
+    Set-Location $path
 
 	Write-Output "Cleaning $path of files older than $age days" | Tee-Object -Append -FilePath $LogName
 	Write-Output "Deleting old files....." | Tee-Object -Append -FilePath $LogName
 
     $files = Get-ChildItem -recurse -File -Path $path | 
-		Where {!$_.PSIsContainer -and $_.LastWriteTime.AddDays($age) -lt (get-date)}
+		Where-Object {!$_.PSIsContainer -and $_.LastWriteTime.AddDays($age) -lt (get-date)}
     foreach ($file in $files)
     {
         Write-Output "-- Deleting $file" | Tee-Object -Append -FilePath $LogName
@@ -67,11 +65,10 @@ $LogName = "FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
         }
     }
 		
-
     Write-Output "Deleting Empty Folders...." | Tee-Object -Append -FilePath $LogName
 
     $folders = Get-ChildItem -recurse -Directory -Path $path | 
-		Where {$_.PSIsContainer -and @(Get-ChildItem -Lit $_.Fullname -r | Where {!$_.PSIsContainer}).Length -eq 0} 
+		Where-Object {$_.PSIsContainer -and @(Get-ChildItem -Lit $_.Fullname -r | Where-Object {!$_.PSIsContainer}).Length -eq 0} 
     foreach ($folder in $folders)
     {
         Write-Output "-- Deleting $folder" | Tee-Object -Append -FilePath $LogName
@@ -79,6 +76,5 @@ $LogName = "FolderCleanup_" + $(Get-Date -Format "yyyyMMdd_hhmmss") + ".log"
     }
  }
  else {
-    
     throw "The folder does not exist: $path"
  }
